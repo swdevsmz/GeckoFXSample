@@ -77,6 +77,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -88,6 +91,12 @@
     </Compile>
     <None Include="Firefox\omni.ja" />
     <None Include="packages.config" />
+    <None Include="packages\Geckofx60.64.60.0.47\.signature.p7s" />
+    <None Include="packages\Geckofx60.64.60.0.47\build\Geckofx60.64.targets" />
+    <None Include="packages\Geckofx60.64.60.0.47\content\Firefox\omni.ja" />
+    <None Include="packages\Geckofx60.64.60.0.47\Geckofx60.64.60.0.47.nupkg" />
+    <None Include="packages\Geckofx60.64.60.0.47\lib\Geckofx-Core.dll.config" />
+    <None Include="packages\Geckofx60.64.60.0.47\lib\Geckofx-Winforms.dll.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -121,6 +130,29 @@
     <Content Include="Firefox\qipcap64.dll" />
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\AccessibleHandler.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\AccessibleMarshal.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\d3dcompiler_47.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\freebl3.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\IA2Marshal.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\lgpllibs.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\libEGL.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\libGLESv2.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\mozavcodec.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\mozavutil.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\mozglue.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\nss3.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\nssckbi.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\nssdbm3.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\plugin-container.exe" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\plugin-hang-ui.exe" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\qipcap64.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\softokn3.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\content\Firefox\xul.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\lib\net45\Geckofx-Core.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\lib\net45\Geckofx-Core.pdb" />
+    <Content Include="packages\Geckofx60.64.60.0.47\lib\net45\Geckofx-Winforms.dll" />
+    <Content Include="packages\Geckofx60.64.60.0.47\lib\net45\Geckofx-Winforms.pdb" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
