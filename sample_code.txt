@@ -1,0 +1,589 @@
+https://alisys.jp/2018/10/10/5/
+
+https://alisys.jp/2019/01/15/geckofx60-c-sample/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+//using System.Threading.Tasks;
+using System.Windows.Forms;
+using Gecko;
+using System.Runtime.InteropServices;
+using System.Net.NetworkInformation;
+using Gecko.Windows;
+ 
+namespace Sgc
+{
+    public partial class sgcmain : Form
+    {
+        public enum DeviceCap
+        {
+            VERTRES = 10,
+            DESKTOPVERTRES = 117,
+        }
+        [DllImport("gdi32.dll")]
+        static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+        [DllImport("gdi32.dll")]
+        static extern IntPtr CreateDC(string lpszDriver, string lpszDevice,
+            string lpszOutput, IntPtr lpInitData);
+        [DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
+        static extern bool DeleteDC(IntPtr hdc);
+ 
+        public sgcmain()
+        {
+            InitializeComponent();
+ 
+ 
+        }
+ 
+        NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
+ 
+        public long outlength_old = 0;
+        public long inlength_old = 0;
+ 
+        /// <summary>
+        /// 管理者モード用
+        /// </summary>
+        public bool saiKyo = false;
+ 
+        /// <summary>
+        /// 初期倍率
+        /// </summary>
+        public float bairitu = 1.0f;
+ 
+        /// <summary>
+        /// ポータルのURL
+        /// </summary>
+        public string portalUrl;
+ 
+        /// <summary>
+        /// インストール方法
+        /// </summary>
+        public string installDir;
+ 
+        // f.OverrideResult = CertOverride.Mismatch | CertOverride.Time | CertOverride.Untrusted;
+        /// <summary>
+        /// 証明書のチェック用
+        /// </summary>
+        public bool certMismatch = false;
+        public string certHost = null;
+ 
+        //public Gecko.IO.MimeInputStream postData = Gecko.IO.MimeInputStream.Create();
+ 
+        public System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+ 
+        private void sgcmain_Load(object sender, EventArgs e)
+        {
+            
+            //共通変数
+            Common exe = new Common();
+            //this.FormBorderStyle = FormBorderStyle.None;
+            //this.WindowState = FormWindowState.Maximized;
+            //this.ControlBox = false;
+            //this.Text = "";
+ 
+            //設定ファイル読み込み
+            installDir =  exe.setting_file_dir("SGCclientsetting.dat");
+            exe.InstallDir = installDir;
+ 
+            //URL設定読み込み
+            exe.setting_file_read("SGCclienturl.dat");
+ 
+            //URLの設定が無ければnullを保存
+            if (exe.Url == null)
+            {
+                exe.Url = "";
+                exe.setting_file_save("SGCclienturl.dat");
+            }
+ 
+            //ポータルURLを設定
+            portalUrl = exe.Url;
+ 
+            //設定ファイル読み込み
+            exe.setting_file_read("SGCclientsetting.dat");
+ 
+            //proxyの設定が無ければ、proxyの設定を空値にして保存
+            if (exe.ProxyUse == "" | exe.ProxyUse == null)
+            {
+                exe.ProxyUse = "0";
+                exe.ProxyIp = "";
+                exe.ProxyPass = "";
+                exe.ProxyPort = "";
+                exe.ProxyUser = "";
+                exe.setting_file_save("SGCclientsetting.dat");
+            }
+ 
+            //管理者以外メニューを非表示
+            this.workToolStripMenuItem.Visible = false;
+            this.toolStripMenuItem1.Visible = false;
+ 
+            
+            ///管理者モード判定
+            string[] commandlines = System.Environment.GetCommandLineArgs();
+            
+            //引数有りで、UUDDLRLRBAなら管理者モード
+            if (commandlines.Length > 1)
+            {
+                if (commandlines[1] == "UUDDLRLRBA")
+                {
+                    saiKyo = true;
+                    this.menuStrip1.BackColor = Color.Pink;
+                    this.Text = this.Text + "    [管理者モード]";
+                    this.workToolStripMenuItem.Visible = true;
+                    this.toolStripMenuItem1.Visible = true;
+ 
+                }
+            }
+ 
+            //ディスプレイの高さ
+            int disph = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+            //ディスプレイの幅
+            int dispw = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+ 
+ 
+            //if (dispw<=640)
+            //{
+            //    int hyoujisiz = 7;
+ 
+            //        this.menuStrip1.Height = (this.menuStrip1.Height * hyoujisiz / 10);
+            //        this.menuToolStripMenuItem.Height = (this.menuToolStripMenuItem.Height * hyoujisiz / 10);
+            //        this.menuToolStripMenuItem.Width = (this.menuToolStripMenuItem.Width * hyoujisiz / 10);
+ 
+            //        this.zoomInToolStripMenuItem.Height = (this.zoomInToolStripMenuItem.Height * hyoujisiz / 10);
+            //        this.zoomInToolStripMenuItem.Width = (this.zoomInToolStripMenuItem.Width * hyoujisiz / 10);
+ 
+            //        this.zoomOutToolStripMenuItem.Height = (this.zoomOutToolStripMenuItem.Height * hyoujisiz / 10);
+            //        this.zoomOutToolStripMenuItem.Width = (this.zoomOutToolStripMenuItem.Width * hyoujisiz / 10);
+ 
+            //        this.normalToolStripMenuItem.Height = (this.normalToolStripMenuItem.Height * hyoujisiz / 10);
+            //        this.normalToolStripMenuItem.Width = (this.normalToolStripMenuItem.Width * hyoujisiz / 10);
+            //}
+ 
+            //メニューキャプチャ、通信速度を表示
+            this.captureToolStripMenuItem.Visible = true;
+            this.toolStripTextBox1.Visible = true;
+            this.toolStripTextBox2.Visible = true;
+ 
+            timerRun();
+ 
+            ///GeckoFXの初期設定
+            Gecko.GeckoPreferences.User["intl.accept_languages"] = "ja, en-us, en";
+            Gecko.GeckoPreferences.User["intl.charset.default"] = "utf8";
+ 
+            Gecko.GeckoPreferences.User["intl.charsetmenu.browser.unicode"] = "utf8";
+            Gecko.GeckoPreferences.User["network.http.accept-encoding"] = "gzip,deflate,br";
+            Gecko.GeckoPreferences.User["network.http.accept-encoding.secure"] = "gzip,deflate,br";
+            Gecko.GeckoPreferences.User["general.useragent.locale"] = "ja";
+ 
+            Gecko.GeckoPreferences.User["network.http.accept.default"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+ 
+            Gecko.GeckoPreferences.User["general.useragent.override"] = "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:50.0) Gecko/20100101 Firefox/50.1";
+ 
+            //Gecko.GeckoPreferences.User["browser.cache.disk.capacity"] = 0;
+ 
+            //Gecko.GeckoPreferences.User["browser.cache.disk.capacity"] = 0;
+ 
+            ///
+            ///オレオレ証明書のキャンセル処理
+            CertOverrideService.GetService().ValidityOverride += (s, f) =>
+                        {
+                            f.OverrideResult = CertOverride.Mismatch | CertOverride.Time | CertOverride.Untrusted;
+                            f.Temporary = true;
+                            f.Handled = true;
+ 
+                            certMismatch = true;
+                            certHost = f.Host;
+                        };
+ 
+            //string refe = portalUrl;
+ 
+ 
+            //geckoメニューを非表示
+            this.geckoWebBrowser1.NoDefaultContextMenu = true;
+ 
+            //geckoのプロファイルディレクトリを指示
+            string userDir = exe.userDir();
+ 
+            Gecko.Xpcom.ProfileDirectory = @userDir;
+ 
+            //geckoの設定を保存
+            Gecko.GeckoPreferences.Save(userDir +"sgcclientweb.conf");
+ 
+            //ブラウザウィンドウを作成
+            this.geckoWebBrowser1.CreateWindow += new EventHandler<GeckoCreateWindowEventArgs>(wb1_CreateWindow);
+ 
+ 
+            //proxyの設定が6スクリプトの場合
+            if (exe.ProxyUse == "6")
+            {
+                Gecko.GeckoPreferences.User["network.proxy.type"] = 2;
+                Gecko.GeckoPreferences.User["network.proxy.autoconfig_url"] = exe.ProxyAuto;
+ 
+            }
+            else
+            {
+                Gecko.GeckoPreferences.User["network.proxy.type"] = int.Parse(exe.ProxyUse);
+            }
+ 
+            ///プロキシが手動設定の場合の設定
+            if (exe.ProxyUse == "1")
+            {
+                Gecko.GeckoPreferences.User["network.proxy.http"] = exe.ProxyIp;
+                Gecko.GeckoPreferences.User["network.proxy.http_port"] = int.Parse("0" + exe.ProxyPort);
+ 
+                Gecko.GeckoPreferences.User["network.proxy.ssl"] = exe.ProxyIp;
+                Gecko.GeckoPreferences.User["network.proxy.ssl_port"] = int.Parse("0" + exe.ProxyPort);
+ 
+                Gecko.GeckoPreferences.User["network.proxy.socks"] = exe.ProxyIp;
+                Gecko.GeckoPreferences.User["network.proxy.socks_port"] = int.Parse("0" + exe.ProxyPort);
+ 
+                Gecko.GeckoPreferences.User["network.proxy.login"] = exe.ProxyUser;
+                Gecko.GeckoPreferences.User["network.proxy.password"] = exe.ProxyPass;
+            }
+ 
+            //プロキシ除外URL
+            Gecko.GeckoPreferences.User["network.proxy.no_proxies_on"] = "'" + exe.ProxyNo + "'";
+ 
+            if (portalUrl == "")
+            {
+                if (exe.SelectLanguage == "0" | exe.SelectLanguage == "" | exe.SelectLanguage == null)
+                {
+                    MessageBox.Show("接続先が未設定です。Configで、PortalURLをセットしてください", "接続先の設定");
+ 
+                }
+                else
+                {
+                    MessageBox.Show("Connection destination has not been set yet. Please set PortalURL in Config", "Connection settings");
+ 
+                }
+                this.Cursor = Cursors.Default;
+            }
+            else
+            {
+                Uri u = new Uri(portalUrl);
+ 
+                //ドメインに対して、のカメラ・ビデオ・オーディオを許可する。
+                var perm = Xpcom.CreateInstance<nsIPermissionManager>("@mozilla.org/permissionmanager;1");
+                nsIURI pwcom = Xpcom.CreateInstance<nsIIOService>("@mozilla.org/network/io-service;1").NewURI(new nsAUTF8String("https://" + u.DnsSafeHost), null, null);
+                perm.Add(pwcom, "camera", 1, 0, 0);
+                perm.Add(pwcom, "video-capture", 1, 0, 0);
+                perm.Add(pwcom, "audio-capture", 1, 0, 0);
+ 
+                var perm1 = Xpcom.CreateInstance<nsIPermissionManager>("@mozilla.org/permissionmanager;1");
+                nsIURI pwcom1 = Xpcom.CreateInstance<nsIIOService>("@mozilla.org/network/io-service;1").NewURI(new nsAUTF8String("http://" + u.DnsSafeHost), null, null);
+                perm1.Add(pwcom1, "camera", 1, 0, 0);
+                perm1.Add(pwcom1, "video-capture", 1, 0, 0);
+                perm1.Add(pwcom1, "audio-capture", 1, 0, 0);
+ 
+                //Gecko.Xpcom.Initialize(@"******************");
+                GeckoPreferences.User["plugin.state.flash"] = true;
+                GeckoPreferences.User["browser.xul.error_pages.enabled"] = true;
+                GeckoPreferences.User["media.navigator.enabled"] = true;
+                /* The following line is the key: */
+                GeckoPreferences.User["media.navigator.permission.disabled"] = true;
+                GeckoPreferences.User["browser.cache.disk.enable"] = true;
+                GeckoPreferences.User["places.history.enabled"] = true;
+                GeckoPreferences.User["browser.cache.memory.enable"] = true; //可能であればRAMにキャッシュする
+ 
+                //ディスプレイサイズが720以下なら、初期起動サイズは55％に設定する。
+                if (dispw <= 720)
+                {
+                    //ブラウザ起動
+                    bool yn = this.geckoWebBrowser1.Navigate(portalUrl, GeckoLoadFlags.None);
+                    bairitu = 0.55f;
+                    var cv = Xpcom.QueryInterface<nsIDocShell>(geckoWebBrowser1.WebBrowserFocus).GetContentViewerAttribute(); cv.SetFullZoomAttribute(bairitu);
+                }
+                else
+                {
+                    //ブラウザ起動
+                    bool yn = this.geckoWebBrowser1.Navigate(portalUrl, GeckoLoadFlags.None);
+                }
+ 
+            }
+        }
+ 
+        public  GeckoWebBrowser wb1 = new GeckoWebBrowser();
+ 
+        void wb1_CreateWindow(object sender, GeckoCreateWindowEventArgs e)
+        {
+         
+            wb1.Navigate(e.Uri, GeckoLoadFlags.None);
+ 
+        }
+ 
+        /// <summary>
+        /// 送受信トラフィック計測用
+        /// </summary>
+        public void timerRun()
+        {
+            timer.Enabled = false;
+ 
+            timer.Tick += new EventHandler(OnTick_FormsTimer);
+ 
+            timer.Interval = 1000;
+            timer.Enabled = true;
+        }
+ 
+        /// <summary>
+        /// 送受信トラフィックの表示
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void OnTick_FormsTimer(object sender, EventArgs e)
+        {
+            this.toolStripTextBox1.Text = "";
+            //BandwidthCalculator(uniCastIPInfo, slectedNic);
+            long outlength = 0;
+            long inlength = 0;
+            foreach (NetworkInterface adapter in adapters)
+            {
+                IPInterfaceProperties properties = adapter.GetIPProperties();
+                IPv4InterfaceStatistics stats = adapter.GetIPv4Statistics();
+                outlength += stats.BytesSent * 8 / 1024;
+                inlength += stats.BytesReceived * 8 / 1024;
+            }
+            if (outlength_old == 0 && inlength_old == 0)
+            {
+                outlength_old = outlength;
+                inlength_old = inlength;
+            }
+            else
+            {
+                long inlength1 = inlength - inlength_old;
+                long outlength1 = outlength - outlength_old;
+ 
+                this.toolStripTextBox2.Text = "受信 " + inlength1.ToString("##,###,###Kb");
+                this.toolStripTextBox1.Text = "送信 " + outlength1.ToString("##,###,###Kb");
+ 
+                inlength_old = inlength;
+                outlength_old = outlength;
+ 
+            }
+        }
+ 
+        /// <summary>
+        /// 終了メニュー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 終了ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+            Application.Exit();
+        }
+ 
+        /// <summary>
+        /// キャプチャ機能
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void captureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Size sizeXY = new Size();
+            sizeXY = geckoWebBrowser1.Size;
+ 
+            float fScaling = GetScalingFactor();
+            sizeXY.Height = (int)(sizeXY.Height * fScaling);
+            sizeXY.Width = (int)(sizeXY.Width * fScaling);
+ 
+            Bitmap bmp = new Bitmap(sizeXY.Width, sizeXY.Height);
+ 
+            Graphics g = Graphics.FromImage(bmp);
+            Point sxy = new Point();
+ 
+            sxy.X = this.Left + SystemInformation.Border3DSize.Width + 7;
+            sxy.Y = this.Top + SystemInformation.CaptionHeight
+                + SystemInformation.MenuHeight
+                + SystemInformation.Border3DSize.Height + 7;
+ 
+            sxy.X = (int)(sxy.X * fScaling);
+            sxy.Y = (int)(sxy.Y * fScaling);
+ 
+            g.CopyFromScreen(sxy, new Point(0, 0), bmp.Size);
+            //解放
+            g.Dispose();
+ 
+            Clipboard.SetImage(bmp);
+ 
+            //this.Hide();
+            string receiveText = capt.ShowMiniForm(bmp, this.Width, this.Height);
+            //Size sizeXY = new Size();
+            //sizeXY = geckoWebBrowser1.Size;
+ 
+            //Bitmap bmp = new Bitmap(sizeXY.Width, sizeXY.Height);
+ 
+            //Graphics g = Graphics.FromImage(bmp);
+            //Point sxy = new Point();
+ 
+            //sxy.X = this.Left + SystemInformation.Border3DSize.Width + 7;
+            //sxy.Y = this.Top + SystemInformation.CaptionHeight
+            //    + SystemInformation.MenuHeight
+            //    + SystemInformation.Border3DSize.Height + 7;
+ 
+            //g.CopyFromScreen(sxy, new Point(0, 0), bmp.Size);
+            ////解放
+            //g.Dispose();
+ 
+            //Clipboard.SetImage(bmp);
+ 
+            ////this.Hide();
+            //string receiveText = capt.ShowMiniForm(bmp, this.Width, this.Height);
+        }
+        private float GetScalingFactor()
+        {
+            Graphics g = Graphics.FromHwnd(IntPtr.Zero);
+            IntPtr desktop = g.GetHdc();
+            int LogicalScreenHeight = GetDeviceCaps(desktop, (int)DeviceCap.VERTRES);
+            int PhysicalScreenHeight = GetDeviceCaps(desktop, (int)DeviceCap.DESKTOPVERTRES);
+            float ScreenScalingFactor = (float)PhysicalScreenHeight / (float)LogicalScreenHeight;
+            return ScreenScalingFactor;
+        }
+ 
+        /// <summary>
+        /// 設定メニュー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void 設定ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string receiveText = conf.ShowMiniForm(saiKyo);
+            if (receiveText != "")
+            {
+                Gecko.Cache.ImageCache.ClearCache(true);
+                Gecko.Cache.ImageCache.ClearCache(false);
+                nsIBrowserHistory historyMan = Xpcom.GetService<nsIBrowserHistory>(Gecko.Contracts.NavHistoryService);
+                historyMan = Xpcom.QueryInterface<nsIBrowserHistory>(historyMan);
+                historyMan.RemoveAllPages();
+ 
+            }
+        }
+ 
+        /// <summary>
+        /// X button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void sgcmain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
+            Application.Exit();
+        }
+ 
+        /// <summary>
+        /// ズームアウト
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void zoomInToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bairitu -= 0.1f;
+            if (bairitu <= 0.1f)
+            {
+                bairitu = 0.1f;
+            }
+            var cv = Xpcom.QueryInterface<nsIDocShell>(geckoWebBrowser1.WebBrowserFocus).GetContentViewerAttribute(); cv.SetFullZoomAttribute(bairitu);
+ 
+        }
+ 
+        /// <summary>
+        /// ズームイン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void zoomOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bairitu += 0.1f;
+  
+            var cv = Xpcom.QueryInterface<nsIDocShell>(geckoWebBrowser1.WebBrowserFocus).GetContentViewerAttribute(); cv.SetFullZoomAttribute(bairitu);
+         }
+ 
+        /// <summary>
+        /// 標準サイズ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void normalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bairitu = 1.0f;
+            var cv = Xpcom.QueryInterface<nsIDocShell>(geckoWebBrowser1.WebBrowserFocus).GetContentViewerAttribute(); cv.SetFullZoomAttribute(bairitu);
+        }
+ 
+        /// <summary>
+        /// このプログラムについてメニュー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox1 aboutBox = new AboutBox1();
+            aboutBox.ShowDialog();
+        }
+ 
+        /// <summary>
+        /// ツールメニューをクリック
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void workToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+ 
+            //GeckoElement element = wb1.DomDocument.GetElementById("btnImgEditSave");
+            //element.TextContent = "利用できません";
+ 
+            string msg = certHost + Environment.NewLine;
+            if (certMismatch)
+            {
+                msg += "証明書が無効です。" + Environment.NewLine + Environment.NewLine;
+            }
+            else
+            {
+                msg += "証明書は有効です。" + Environment.NewLine + Environment.NewLine;
+            }
+ 
+            string sslString = "";
+            if(portalUrl.Contains("https://"))
+            {
+                sslString = "SSL";
+            }
+            if (portalUrl.Contains("http://"))
+            {
+                sslString = "HTTP";
+            }
+            msg +=  "プロトコルは、"+ sslString + "を利用し、通信を行います";
+ 
+            MessageBox.Show(msg,"Network");
+        }
+ 
+        /// <summary>
+        /// 管理画面を別窓で表示
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void kanriurl_Click(object sender, EventArgs e)
+        {
+            string[] kanriurl = portalUrl.Split('/');
+            System.Diagnostics.Process.Start(kanriurl[0] + "//" + kanriurl[2]);
+        }
+ 
+        /// <summary>
+        /// タスクバーの制御
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (this.FormBorderStyle == FormBorderStyle.None)
+            {
+                this.FormBorderStyle = FormBorderStyle.Sizable;
+            }
+            else
+            {
+                this.FormBorderStyle = FormBorderStyle.None;
+            }
+        }
+    }
+}

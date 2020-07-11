@@ -43,6 +43,7 @@ namespace GeckoFXSample
             var geckoWebBrowser = ((GeckoWebBrowser)controls[0]);
             // Googleを表示
             geckoWebBrowser.Navigate("www.google.com");
+           
         }
 
         private void StartButton_Click(object sender, EventArgs e)
