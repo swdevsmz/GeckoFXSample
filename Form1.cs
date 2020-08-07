@@ -18,6 +18,7 @@ namespace GeckoFXSample
     {
 
         BackgroundWorker backgroundWorker;
+        GeckoWebBrowser geckoWebBrowser;
 
         public Form1()
         {
@@ -40,9 +41,8 @@ namespace GeckoFXSample
 
             // Program.csでセットしたGeckoWebBrowserを取得
             var controls = this.panel1.Controls.Find("geckoWebBrowser", true);
-            var geckoWebBrowser = ((GeckoWebBrowser)controls[0]);
-            // Googleを表示
-            geckoWebBrowser.Navigate("www.google.com");
+            geckoWebBrowser = ((GeckoWebBrowser)controls[0]);
+
            
         }
 
@@ -161,5 +161,15 @@ namespace GeckoFXSample
             TextBox1.Text = e.Result.ToString();
         }
 
+        private void navigateButton_Click(object sender, EventArgs e)
+        {
+            // Googleを表示
+            geckoWebBrowser.Navigate(this.urlTextBox.Text);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            geckoWebBrowser.Dispose();
+        }
     }
 }
