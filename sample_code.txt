@@ -1,3 +1,5 @@
+https://chouseisan.com/s?h=5d502048f01e4de89e90b80b0e5285c9
+
 https://alisys.jp/2018/10/10/5/
 
 https://alisys.jp/2019/01/15/geckofx60-c-sample/
@@ -46,28 +48,28 @@ namespace Sgc
         public long inlength_old = 0;
  
         /// <summary>
-        /// ŠÇ—Òƒ‚[ƒh—p
+        /// ç®¡ç†è€…ãƒ¢ãƒ¼ãƒ‰ç”¨
         /// </summary>
         public bool saiKyo = false;
  
         /// <summary>
-        /// ‰Šú”{—¦
+        /// åˆæœŸå€ç‡
         /// </summary>
         public float bairitu = 1.0f;
  
         /// <summary>
-        /// ƒ|[ƒ^ƒ‹‚ÌURL
+        /// ãƒãƒ¼ã‚¿ãƒ«ã®URL
         /// </summary>
         public string portalUrl;
  
         /// <summary>
-        /// ƒCƒ“ƒXƒg[ƒ‹•û–@
+        /// ã‚¤ãƒ³ã‚¹ãƒˆãƒ¼ãƒ«æ–¹æ³•
         /// </summary>
         public string installDir;
  
         // f.OverrideResult = CertOverride.Mismatch | CertOverride.Time | CertOverride.Untrusted;
         /// <summary>
-        /// Ø–¾‘‚Ìƒ`ƒFƒbƒN—p
+        /// è¨¼æ˜æ›¸ã®ãƒã‚§ãƒƒã‚¯ç”¨
         /// </summary>
         public bool certMismatch = false;
         public string certHost = null;
@@ -79,34 +81,34 @@ namespace Sgc
         private void sgcmain_Load(object sender, EventArgs e)
         {
             
-            //‹¤’Ê•Ï”
+            //å…±é€šå¤‰æ•°
             Common exe = new Common();
             //this.FormBorderStyle = FormBorderStyle.None;
             //this.WindowState = FormWindowState.Maximized;
             //this.ControlBox = false;
             //this.Text = "";
  
-            //İ’èƒtƒ@ƒCƒ‹“Ç‚İ‚İ
+            //è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿
             installDir =  exe.setting_file_dir("SGCclientsetting.dat");
             exe.InstallDir = installDir;
  
-            //URLİ’è“Ç‚İ‚İ
+            //URLè¨­å®šèª­ã¿è¾¼ã¿
             exe.setting_file_read("SGCclienturl.dat");
  
-            //URL‚Ìİ’è‚ª–³‚¯‚ê‚Înull‚ğ•Û‘¶
+            //URLã®è¨­å®šãŒç„¡ã‘ã‚Œã°nullã‚’ä¿å­˜
             if (exe.Url == null)
             {
                 exe.Url = "";
                 exe.setting_file_save("SGCclienturl.dat");
             }
  
-            //ƒ|[ƒ^ƒ‹URL‚ğİ’è
+            //ãƒãƒ¼ã‚¿ãƒ«URLã‚’è¨­å®š
             portalUrl = exe.Url;
  
-            //İ’èƒtƒ@ƒCƒ‹“Ç‚İ‚İ
+            //è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿
             exe.setting_file_read("SGCclientsetting.dat");
  
-            //proxy‚Ìİ’è‚ª–³‚¯‚ê‚ÎAproxy‚Ìİ’è‚ğ‹ó’l‚É‚µ‚Ä•Û‘¶
+            //proxyã®è¨­å®šãŒç„¡ã‘ã‚Œã°ã€proxyã®è¨­å®šã‚’ç©ºå€¤ã«ã—ã¦ä¿å­˜
             if (exe.ProxyUse == "" | exe.ProxyUse == null)
             {
                 exe.ProxyUse = "0";
@@ -117,31 +119,31 @@ namespace Sgc
                 exe.setting_file_save("SGCclientsetting.dat");
             }
  
-            //ŠÇ—ÒˆÈŠOƒƒjƒ…[‚ğ”ñ•\¦
+            //ç®¡ç†è€…ä»¥å¤–ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’éè¡¨ç¤º
             this.workToolStripMenuItem.Visible = false;
             this.toolStripMenuItem1.Visible = false;
  
             
-            ///ŠÇ—Òƒ‚[ƒh”»’è
+            ///ç®¡ç†è€…ãƒ¢ãƒ¼ãƒ‰åˆ¤å®š
             string[] commandlines = System.Environment.GetCommandLineArgs();
             
-            //ˆø”—L‚è‚ÅAUUDDLRLRBA‚È‚çŠÇ—Òƒ‚[ƒh
+            //å¼•æ•°æœ‰ã‚Šã§ã€UUDDLRLRBAãªã‚‰ç®¡ç†è€…ãƒ¢ãƒ¼ãƒ‰
             if (commandlines.Length > 1)
             {
                 if (commandlines[1] == "UUDDLRLRBA")
                 {
                     saiKyo = true;
                     this.menuStrip1.BackColor = Color.Pink;
-                    this.Text = this.Text + "    [ŠÇ—Òƒ‚[ƒh]";
+                    this.Text = this.Text + "    [ç®¡ç†è€…ãƒ¢ãƒ¼ãƒ‰]";
                     this.workToolStripMenuItem.Visible = true;
                     this.toolStripMenuItem1.Visible = true;
  
                 }
             }
  
-            //ƒfƒBƒXƒvƒŒƒC‚Ì‚‚³
+            //ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã®é«˜ã•
             int disph = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
-            //ƒfƒBƒXƒvƒŒƒC‚Ì•
+            //ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã®å¹…
             int dispw = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
  
  
@@ -163,14 +165,14 @@ namespace Sgc
             //        this.normalToolStripMenuItem.Width = (this.normalToolStripMenuItem.Width * hyoujisiz / 10);
             //}
  
-            //ƒƒjƒ…[ƒLƒƒƒvƒ`ƒƒA’ÊM‘¬“x‚ğ•\¦
+            //ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚­ãƒ£ãƒ—ãƒãƒ£ã€é€šä¿¡é€Ÿåº¦ã‚’è¡¨ç¤º
             this.captureToolStripMenuItem.Visible = true;
             this.toolStripTextBox1.Visible = true;
             this.toolStripTextBox2.Visible = true;
  
             timerRun();
  
-            ///GeckoFX‚Ì‰Šúİ’è
+            ///GeckoFXã®åˆæœŸè¨­å®š
             Gecko.GeckoPreferences.User["intl.accept_languages"] = "ja, en-us, en";
             Gecko.GeckoPreferences.User["intl.charset.default"] = "utf8";
  
@@ -188,7 +190,7 @@ namespace Sgc
             //Gecko.GeckoPreferences.User["browser.cache.disk.capacity"] = 0;
  
             ///
-            ///ƒIƒŒƒIƒŒØ–¾‘‚ÌƒLƒƒƒ“ƒZƒ‹ˆ—
+            ///ã‚ªãƒ¬ã‚ªãƒ¬è¨¼æ˜æ›¸ã®ã‚­ãƒ£ãƒ³ã‚»ãƒ«å‡¦ç†
             CertOverrideService.GetService().ValidityOverride += (s, f) =>
                         {
                             f.OverrideResult = CertOverride.Mismatch | CertOverride.Time | CertOverride.Untrusted;
@@ -202,22 +204,22 @@ namespace Sgc
             //string refe = portalUrl;
  
  
-            //geckoƒƒjƒ…[‚ğ”ñ•\¦
+            //geckoãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’éè¡¨ç¤º
             this.geckoWebBrowser1.NoDefaultContextMenu = true;
  
-            //gecko‚Ìƒvƒƒtƒ@ƒCƒ‹ƒfƒBƒŒƒNƒgƒŠ‚ğw¦
+            //geckoã®ãƒ—ãƒ­ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã‚’æŒ‡ç¤º
             string userDir = exe.userDir();
  
             Gecko.Xpcom.ProfileDirectory = @userDir;
  
-            //gecko‚Ìİ’è‚ğ•Û‘¶
+            //geckoã®è¨­å®šã‚’ä¿å­˜
             Gecko.GeckoPreferences.Save(userDir +"sgcclientweb.conf");
  
-            //ƒuƒ‰ƒEƒUƒEƒBƒ“ƒhƒE‚ğì¬
+            //ãƒ–ãƒ©ã‚¦ã‚¶ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ä½œæˆ
             this.geckoWebBrowser1.CreateWindow += new EventHandler<GeckoCreateWindowEventArgs>(wb1_CreateWindow);
  
  
-            //proxy‚Ìİ’è‚ª6ƒXƒNƒŠƒvƒg‚Ìê‡
+            //proxyã®è¨­å®šãŒ6ã‚¹ã‚¯ãƒªãƒ—ãƒˆã®å ´åˆ
             if (exe.ProxyUse == "6")
             {
                 Gecko.GeckoPreferences.User["network.proxy.type"] = 2;
@@ -229,7 +231,7 @@ namespace Sgc
                 Gecko.GeckoPreferences.User["network.proxy.type"] = int.Parse(exe.ProxyUse);
             }
  
-            ///ƒvƒƒLƒV‚ªè“®İ’è‚Ìê‡‚Ìİ’è
+            ///ãƒ—ãƒ­ã‚­ã‚·ãŒæ‰‹å‹•è¨­å®šã®å ´åˆã®è¨­å®š
             if (exe.ProxyUse == "1")
             {
                 Gecko.GeckoPreferences.User["network.proxy.http"] = exe.ProxyIp;
@@ -245,14 +247,14 @@ namespace Sgc
                 Gecko.GeckoPreferences.User["network.proxy.password"] = exe.ProxyPass;
             }
  
-            //ƒvƒƒLƒVœŠOURL
+            //ãƒ—ãƒ­ã‚­ã‚·é™¤å¤–URL
             Gecko.GeckoPreferences.User["network.proxy.no_proxies_on"] = "'" + exe.ProxyNo + "'";
  
             if (portalUrl == "")
             {
                 if (exe.SelectLanguage == "0" | exe.SelectLanguage == "" | exe.SelectLanguage == null)
                 {
-                    MessageBox.Show("Ú‘±æ‚ª–¢İ’è‚Å‚·BConfig‚ÅAPortalURL‚ğƒZƒbƒg‚µ‚Ä‚­‚¾‚³‚¢", "Ú‘±æ‚Ìİ’è");
+                    MessageBox.Show("æ¥ç¶šå…ˆãŒæœªè¨­å®šã§ã™ã€‚Configã§ã€PortalURLã‚’ã‚»ãƒƒãƒˆã—ã¦ãã ã•ã„", "æ¥ç¶šå…ˆã®è¨­å®š");
  
                 }
                 else
@@ -266,7 +268,7 @@ namespace Sgc
             {
                 Uri u = new Uri(portalUrl);
  
-                //ƒhƒƒCƒ“‚É‘Î‚µ‚ÄA‚ÌƒJƒƒ‰EƒrƒfƒIEƒI[ƒfƒBƒI‚ğ‹–‰Â‚·‚éB
+                //ãƒ‰ãƒ¡ã‚¤ãƒ³ã«å¯¾ã—ã¦ã€ã®ã‚«ãƒ¡ãƒ©ãƒ»ãƒ“ãƒ‡ã‚ªãƒ»ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚’è¨±å¯ã™ã‚‹ã€‚
                 var perm = Xpcom.CreateInstance<nsIPermissionManager>("@mozilla.org/permissionmanager;1");
                 nsIURI pwcom = Xpcom.CreateInstance<nsIIOService>("@mozilla.org/network/io-service;1").NewURI(new nsAUTF8String("https://" + u.DnsSafeHost), null, null);
                 perm.Add(pwcom, "camera", 1, 0, 0);
@@ -287,19 +289,19 @@ namespace Sgc
                 GeckoPreferences.User["media.navigator.permission.disabled"] = true;
                 GeckoPreferences.User["browser.cache.disk.enable"] = true;
                 GeckoPreferences.User["places.history.enabled"] = true;
-                GeckoPreferences.User["browser.cache.memory.enable"] = true; //‰Â”\‚Å‚ ‚ê‚ÎRAM‚ÉƒLƒƒƒbƒVƒ…‚·‚é
+                GeckoPreferences.User["browser.cache.memory.enable"] = true; //å¯èƒ½ã§ã‚ã‚Œã°RAMã«ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã™ã‚‹
  
-                //ƒfƒBƒXƒvƒŒƒCƒTƒCƒY‚ª720ˆÈ‰º‚È‚çA‰Šú‹N“®ƒTƒCƒY‚Í55“‚Éİ’è‚·‚éB
+                //ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ã‚µã‚¤ã‚ºãŒ720ä»¥ä¸‹ãªã‚‰ã€åˆæœŸèµ·å‹•ã‚µã‚¤ã‚ºã¯55ï¼…ã«è¨­å®šã™ã‚‹ã€‚
                 if (dispw <= 720)
                 {
-                    //ƒuƒ‰ƒEƒU‹N“®
+                    //ãƒ–ãƒ©ã‚¦ã‚¶èµ·å‹•
                     bool yn = this.geckoWebBrowser1.Navigate(portalUrl, GeckoLoadFlags.None);
                     bairitu = 0.55f;
                     var cv = Xpcom.QueryInterface<nsIDocShell>(geckoWebBrowser1.WebBrowserFocus).GetContentViewerAttribute(); cv.SetFullZoomAttribute(bairitu);
                 }
                 else
                 {
-                    //ƒuƒ‰ƒEƒU‹N“®
+                    //ãƒ–ãƒ©ã‚¦ã‚¶èµ·å‹•
                     bool yn = this.geckoWebBrowser1.Navigate(portalUrl, GeckoLoadFlags.None);
                 }
  
@@ -316,7 +318,7 @@ namespace Sgc
         }
  
         /// <summary>
-        /// ‘—óMƒgƒ‰ƒtƒBƒbƒNŒv‘ª—p
+        /// é€å—ä¿¡ãƒˆãƒ©ãƒ•ã‚£ãƒƒã‚¯è¨ˆæ¸¬ç”¨
         /// </summary>
         public void timerRun()
         {
@@ -329,7 +331,7 @@ namespace Sgc
         }
  
         /// <summary>
-        /// ‘—óMƒgƒ‰ƒtƒBƒbƒN‚Ì•\¦
+        /// é€å—ä¿¡ãƒˆãƒ©ãƒ•ã‚£ãƒƒã‚¯ã®è¡¨ç¤º
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -356,8 +358,8 @@ namespace Sgc
                 long inlength1 = inlength - inlength_old;
                 long outlength1 = outlength - outlength_old;
  
-                this.toolStripTextBox2.Text = "óM " + inlength1.ToString("##,###,###Kb");
-                this.toolStripTextBox1.Text = "‘—M " + outlength1.ToString("##,###,###Kb");
+                this.toolStripTextBox2.Text = "å—ä¿¡ " + inlength1.ToString("##,###,###Kb");
+                this.toolStripTextBox1.Text = "é€ä¿¡ " + outlength1.ToString("##,###,###Kb");
  
                 inlength_old = inlength;
                 outlength_old = outlength;
@@ -366,18 +368,18 @@ namespace Sgc
         }
  
         /// <summary>
-        /// I—¹ƒƒjƒ…[
+        /// çµ‚äº†ãƒ¡ãƒ‹ãƒ¥ãƒ¼
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void I—¹ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void çµ‚äº†ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
             Application.Exit();
         }
  
         /// <summary>
-        /// ƒLƒƒƒvƒ`ƒƒ‹@”\
+        /// ã‚­ãƒ£ãƒ—ãƒãƒ£æ©Ÿèƒ½
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -404,7 +406,7 @@ namespace Sgc
             sxy.Y = (int)(sxy.Y * fScaling);
  
             g.CopyFromScreen(sxy, new Point(0, 0), bmp.Size);
-            //‰ğ•ú
+            //è§£æ”¾
             g.Dispose();
  
             Clipboard.SetImage(bmp);
@@ -425,7 +427,7 @@ namespace Sgc
             //    + SystemInformation.Border3DSize.Height + 7;
  
             //g.CopyFromScreen(sxy, new Point(0, 0), bmp.Size);
-            ////‰ğ•ú
+            ////è§£æ”¾
             //g.Dispose();
  
             //Clipboard.SetImage(bmp);
@@ -444,11 +446,11 @@ namespace Sgc
         }
  
         /// <summary>
-        /// İ’èƒƒjƒ…[
+        /// è¨­å®šãƒ¡ãƒ‹ãƒ¥ãƒ¼
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void İ’èToolStripMenuItem_Click(object sender, EventArgs e)
+        private void è¨­å®šToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string receiveText = conf.ShowMiniForm(saiKyo);
             if (receiveText != "")
@@ -474,7 +476,7 @@ namespace Sgc
         }
  
         /// <summary>
-        /// ƒY[ƒ€ƒAƒEƒg
+        /// ã‚ºãƒ¼ãƒ ã‚¢ã‚¦ãƒˆ
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -490,7 +492,7 @@ namespace Sgc
         }
  
         /// <summary>
-        /// ƒY[ƒ€ƒCƒ“
+        /// ã‚ºãƒ¼ãƒ ã‚¤ãƒ³
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -502,7 +504,7 @@ namespace Sgc
          }
  
         /// <summary>
-        /// •W€ƒTƒCƒY
+        /// æ¨™æº–ã‚µã‚¤ã‚º
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -513,7 +515,7 @@ namespace Sgc
         }
  
         /// <summary>
-        /// ‚±‚ÌƒvƒƒOƒ‰ƒ€‚É‚Â‚¢‚Äƒƒjƒ…[
+        /// ã“ã®ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã«ã¤ã„ã¦ãƒ¡ãƒ‹ãƒ¥ãƒ¼
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -524,7 +526,7 @@ namespace Sgc
         }
  
         /// <summary>
-        /// ƒc[ƒ‹ƒƒjƒ…[‚ğƒNƒŠƒbƒN
+        /// ãƒ„ãƒ¼ãƒ«ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ã‚¯ãƒªãƒƒã‚¯
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -532,16 +534,16 @@ namespace Sgc
         {
  
             //GeckoElement element = wb1.DomDocument.GetElementById("btnImgEditSave");
-            //element.TextContent = "—˜—p‚Å‚«‚Ü‚¹‚ñ";
+            //element.TextContent = "åˆ©ç”¨ã§ãã¾ã›ã‚“";
  
             string msg = certHost + Environment.NewLine;
             if (certMismatch)
             {
-                msg += "Ø–¾‘‚ª–³Œø‚Å‚·B" + Environment.NewLine + Environment.NewLine;
+                msg += "è¨¼æ˜æ›¸ãŒç„¡åŠ¹ã§ã™ã€‚" + Environment.NewLine + Environment.NewLine;
             }
             else
             {
-                msg += "Ø–¾‘‚Í—LŒø‚Å‚·B" + Environment.NewLine + Environment.NewLine;
+                msg += "è¨¼æ˜æ›¸ã¯æœ‰åŠ¹ã§ã™ã€‚" + Environment.NewLine + Environment.NewLine;
             }
  
             string sslString = "";
@@ -553,13 +555,13 @@ namespace Sgc
             {
                 sslString = "HTTP";
             }
-            msg +=  "ƒvƒƒgƒRƒ‹‚ÍA"+ sslString + "‚ğ—˜—p‚µA’ÊM‚ğs‚¢‚Ü‚·";
+            msg +=  "ãƒ—ãƒ­ãƒˆã‚³ãƒ«ã¯ã€"+ sslString + "ã‚’åˆ©ç”¨ã—ã€é€šä¿¡ã‚’è¡Œã„ã¾ã™";
  
             MessageBox.Show(msg,"Network");
         }
  
         /// <summary>
-        /// ŠÇ—‰æ–Ê‚ğ•Ê‘‹‚Å•\¦
+        /// ç®¡ç†ç”»é¢ã‚’åˆ¥çª“ã§è¡¨ç¤º
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -570,7 +572,7 @@ namespace Sgc
         }
  
         /// <summary>
-        /// ƒ^ƒXƒNƒo[‚Ì§Œä
+        /// ã‚¿ã‚¹ã‚¯ãƒãƒ¼ã®åˆ¶å¾¡
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
